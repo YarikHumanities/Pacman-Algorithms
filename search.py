@@ -156,8 +156,24 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
 
     util.raiseNotDefined()
 
-def greedySearch(problem: SearchProblem(), heuristic=nullHeuristic):
+def greedySearch(problem: SearchProblem, heuristic=nullHeuristic):
 
+    from util import PriorityQueue
+    priority_queue = PriorityQueue()
+    visited = []
+    priority_queue.push((problem.getStartState(), []), 0)
+
+    while not priority_queue.isEmpty():
+        curr_state, path_to_curr = priority_queue.pop()
+        if curr_state not in visited:
+            visited.append(curr_state)
+
+            if problem.isGoalState(curr_state):
+                return path_to_curr
+            
+            for successor, successor_direction, successor_cost in problem.getSuccessors(curr_state):
+                temp_path = path_to_curr + [successor_direction]
+                priority_queue.push((successor, temp_path), heuristic(successor, problem))
 
     util.raiseNotDefined()
 # Abbreviations
