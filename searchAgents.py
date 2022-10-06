@@ -292,7 +292,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.startingGameState = startingGameState
+        #self.startingGameState = startingGameState
         self.visitedCorners = [False, False, False, False]
 
         for i in range(4):
@@ -356,13 +356,12 @@ class CornersProblem(search.SearchProblem):
             if not self.walls[next_x][next_y]:
                 successor_state= (next_x, next_y)
 
-                visitedCorners = list(state[1])
+                visited_corners = list(state[1])
                 for i in range(4):
                     if successor_state == self.corners[i]:
-                        visitedCorners[i] = True
+                        visited_corners[i] = True
 
-                cost = 1
-                successors.append( ((successor_state, tuple(visitedCorners)), action, cost) )
+                successors.append( ((successor_state, visited_corners), action, 1) )
         
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -464,6 +463,9 @@ class AStarFoodSearchAgent(SearchAgent):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
         self.searchType = FoodSearchProblem
 
+def manhattanDistance(xy1, xy2):
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -496,17 +498,31 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     "*** YOUR CODE HERE ***"
     food_list = foodGrid.asList()
 
-    problem.heuristicInfo['count_of_walls'] = problem.walls.count()
+    #problem.heuristicInfo['count_of_walls'] = problem.walls.count()
+#FIRST
+    # if problem.isGoalState(state):
+    #     return 0
+    # distance = []
 
-    if problem.isGoalState(state):
-        return 0
-    distance = []
 
+    # for item in food_list:
+    #     distance.append(mazeDistance(position,item,problem.startingGameState))
 
-    for item in food_list:
-        distance.append(mazeDistance(position,item,problem.startingGameState))
+    # return max(distance)
 
-    return max(distance)
+#SECOND
+    total_cost = 0
+    current_position = position
+    while food_list:
+        temp_food_list = []
+        for food in food_list:
+            temp_food_list.append(((mazeDistance(current_position, food, problem.startingGameState)), food))
+        heuristic_cost, food = min(temp_food_list)
+        food_list.remove(food)
+        current_position = food
+        total_cost += heuristic_cost
+
+    return total_cost
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
