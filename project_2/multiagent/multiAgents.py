@@ -150,7 +150,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-    
+
         possibleActions = gameState.getLegalActions(0)
         if Directions.STOP in possibleActions:
             possibleActions.remove(Directions.STOP)
@@ -165,7 +165,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
             if action_scores[index] == max_action:
                 max_indices.append(index)
 
-       
         chosenIndex = random.choice(max_indices)
         return possibleActions[chosenIndex]
 
@@ -175,6 +174,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         if gameState.isLose() or gameState.isWin() or depth == self.depth:
             return self.evaluationFunction(gameState)
+
 
         if agent == 0:  # pacman
             successors = []
@@ -186,12 +186,12 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 successors.append(temp)
                 return max(successors)
 
-        else:  # ghosts
+        else:  # minimize for ghosts
             successors = []
-            nextAgent = agent + 1  
+            nextAgent = agent + 1  # get the next agent
             if gameState.getNumAgents() == nextAgent:
                 nextAgent = 0
-            if nextAgent == 0:  
+            if nextAgent == 0:  # increase depth every time all agents have moved
                 depth += 1
                 legal_actions = gameState.getLegalActions(agent)
                 if Directions.STOP in legal_actions:
@@ -200,7 +200,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     temp = self.minimax(nextAgent, depth, gameState.generateSuccessor(agent, action))
                     successors.append(temp)
                     return min(successors)
-
         # util.raiseNotDefined()
         
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -276,6 +275,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     
         # util.raiseNotDefined()
+
+        util.raiseNotDefined()
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
