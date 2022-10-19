@@ -213,11 +213,69 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        possibleActions = gameState.getLegalActions(0)
+        if Directions.STOP in possibleActions:
+            possibleActions.remove(Directions.STOP)
+
+        alpha = -float('inf')
+        beta = float('inf')
+        action_scores = []
+        for action in possibleActions:
+            action_scores.append(self.alpha_beta(0, 0, gameState.generateSuccessor(0, action), alpha, beta))
+
+        max_action = max(action_scores)
+        max_indices = []
+        for index in range(len(action_scores)):
+            if action_scores[index] == max_action:
+                max_indices.append(index)
+
+        chosenIndex = random.choice(max_indices)
+        return possibleActions[chosenIndex]
+        # util.raiseNotDefined()
 
     def alpha_beta(self, agent, depth, gameState, alpha, beta):
 
-        util.raiseNotDefined()
+        if gameState.isLose() or gameState.isWin() or depth == self.depth:
+            return self.evaluationFunction(gameState)
+
+        if agent == 0: 
+            comparator = -float('inf')
+            successors = []
+            legal_actions = gameState.getLegalActions(0)
+            if Directions.STOP in legal_actions:
+                legal_actions.remove(Directions.STOP)
+
+            for action in legal_actions:
+                temp = self.alpha_beta(1, depth, gameState.generateSuccessor(agent, action), alpha, beta)
+                comparator = max(comparator, temp)
+                alpha = max(alpha, comparator)
+                if beta <= alpha:  
+                    break
+            return comparator
+        else:  
+            nextAgent = agent + 1  
+            if gameState.getNumAgents() == nextAgent:
+                nextAgent = 0
+            if nextAgent == 0: 
+                depth += 1
+
+            legal_actions = gameState.getLegalActions(agent)
+            if Directions.STOP in legal_actions:
+                legal_actions.remove(Directions.STOP)
+
+            for action in legal_actions:
+                comparator = float('inf')
+                temp = self.alpha_beta(nextAgent, depth, gameState.generateSuccessor(agent, action), alpha, beta)
+                comparator = min(comparator, temp)
+                beta = min(beta, comparator)
+                if beta <= alpha:  
+                    break
+            return comparator
+
+
+
+    
+        # util.raiseNotDefined()
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -243,6 +301,5 @@ def betterEvaluationFunction(currentGameState: GameState):
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
-
 # Abbreviation
 better = betterEvaluationFunction
