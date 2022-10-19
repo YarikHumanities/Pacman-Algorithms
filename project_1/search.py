@@ -91,7 +91,7 @@ def depthFirstSearch(problem: SearchProblem):
     
     "*** YOUR CODE HERE ***"
     #util.raiseNotDefined()
-
+#Lee
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
