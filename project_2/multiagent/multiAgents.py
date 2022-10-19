@@ -291,7 +291,55 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        possibleActions = gameState.getLegalActions(0)
+        if Directions.STOP in possibleActions:
+            possibleActions.remove(Directions.STOP)
+
+        action_scores = []
+        for action in possibleActions:
+            action_scores.append(self.expectimax(0, 0, gameState.generateSuccessor(0, action)))
+
+        max_action = max(action_scores)
+        max_indices = []
+        for index in range(len(action_scores)):
+            if action_scores[index] == max_action:
+                max_indices.append(index)
+
+        chosenIndex = random.choice(max_indices)
+        return possibleActions[chosenIndex]
+
+    def expectimax(self, agent, depth, gameState):
+        if gameState.isLose() or gameState.isWin() or depth == self.depth:
+            return self.evaluationFunction(gameState)
+
+        if agent == 0: 
+            successors = []
+
+            legal_actions = gameState.getLegalActions(0)
+            if Directions.STOP in legal_actions:
+                legal_actions.remove(Directions.STOP)
+            
+            for action in legal_actions:
+                temp = self.expectimax(1, depth, gameState.generateSuccessor(agent, action))
+                successors.append(temp)
+                return max(successors)
+
+        else: 
+            successors = []
+            nextAgent = agent + 1 
+            if gameState.getNumAgents() == nextAgent:
+                nextAgent = 0
+            if nextAgent == 0:
+                depth += 1
+
+            legal_actions = gameState.getLegalActions(agent)
+            if Directions.STOP in legal_actions:
+                legal_actions.remove(Directions.STOP)
+            
+            for action in legal_actions:
+                temp = self.expectimax(nextAgent, depth, gameState.generateSuccessor(agent, action))
+                successors.append(temp)
+                return sum(successors)/float(len(legal_actions))
 
 def betterEvaluationFunction(currentGameState: GameState):
     """
@@ -301,6 +349,7 @@ def betterEvaluationFunction(currentGameState: GameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+   
     util.raiseNotDefined()
 # Abbreviation
 better = betterEvaluationFunction
